@@ -766,6 +766,14 @@ em {
     .skills-categories-area .skills-categories-grid {
         grid-template-columns: 1fr;
     }
+
+    .skills-categories-area .skills-category-card {
+        margin-bottom: 14px;
+    }
+
+    .skills-categories-area .skills-category-card:last-child {
+        margin-bottom: 0;
+    }
 }
 
 @media only screen and (max-width: 767px) {
