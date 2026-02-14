@@ -78,10 +78,10 @@ include __DIR__ . '/includes/page-start.php';
                         <div class="skills-marquee">
                             <div class="skills-marquee-track">
                                 <?php foreach ($skillsLogos as $logo): ?>
-                                    <img src="assets/images/client-logos/<?php echo htmlspecialchars($logo, ENT_QUOTES, 'UTF-8'); ?>" alt="Skill logo">
+                                    <img src="assets/images/skills/<?php echo htmlspecialchars($logo, ENT_QUOTES, 'UTF-8'); ?>" alt="Skill logo">
                                 <?php endforeach; ?>
                                 <?php foreach ($skillsLogos as $logo): ?>
-                                    <img src="assets/images/client-logos/<?php echo htmlspecialchars($logo, ENT_QUOTES, 'UTF-8'); ?>" alt="Skill logo">
+                                    <img src="assets/images/skills/<?php echo htmlspecialchars($logo, ENT_QUOTES, 'UTF-8'); ?>" alt="Skill logo">
                                 <?php endforeach; ?>
                             </div>
                         </div>

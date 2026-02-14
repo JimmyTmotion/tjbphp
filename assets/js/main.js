@@ -12,7 +12,9 @@
         '.site-content > section .slider-arrows',
         '.site-content > section video',
         '.site-content > section .company-list',
-        '.site-content > section .tjb-footer-row'
+        '.site-content > section .tjb-footer-row',
+        '.site-content > section .skills-category-card',
+        '.site-content > section .skills-category-list li'
     ].join(',');
     var isNavigating = false;
 
@@ -89,6 +91,7 @@
         setStaggeredReveal('.site-content > section .section-title', 'up', 70, 220);
         setStaggeredReveal('.site-content > section .single-resume', 'up', 90, 220);
         setStaggeredReveal('.site-content > section .resume-item', 'up', 70, 280);
+        setStaggeredReveal('.site-content > section .skills-category-card', 'up', 90, 260);
 
         Array.prototype.slice.call(document.querySelectorAll('.site-content > section .about-image-part'))
             .forEach(function (el) { setReveal(el, 'left', 80); });
@@ -96,6 +99,15 @@
             .forEach(function (el) { setReveal(el, 'right', 120); });
         Array.prototype.slice.call(document.querySelectorAll('.site-content > section .testimonial-item, .site-content > section .slider-arrows, .site-content > section video, .site-content > section .company-list, .site-content > section .tjb-footer-row'))
             .forEach(function (el) { setReveal(el, 'up', 140); });
+
+        Array.prototype.slice.call(document.querySelectorAll('.skills-category-card'))
+            .forEach(function (card, cardIndex) {
+                var items = Array.prototype.slice.call(card.querySelectorAll('.skills-category-list li'));
+                items.forEach(function (item, itemIndex) {
+                    var delay = Math.min((cardIndex * 120) + (itemIndex * 70), 520);
+                    setReveal(item, 'up', delay);
+                });
+            });
 
         var targets = Array.prototype.slice.call(document.querySelectorAll(revealSelector));
         if (!targets.length) {

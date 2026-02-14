@@ -23,7 +23,7 @@
                         <div class="navbar-collapse collapse">
                             <ul class="navigation onepage clearfix">
                                 <li class="<?php echo $currentPage === 'home' ? 'active' : ''; ?>"><a href="index.php" class="nav-link-click">Home</a></li>
-                                <li class="<?php echo $currentPage === 'about' ? 'active' : ''; ?>"><a href="about.php" class="nav-link-click">About</a></li>
+                                <li class="<?php echo $currentPage === 'skills-experience' ? 'active' : ''; ?>"><a href="skills-experience.php" class="nav-link-click">Skills &amp; Experience</a></li>
                                 <li><a href="mailto:hello@tomjbutler.com" class="nav-link-click">Contact</a></li>
                             </ul>
                         </div>

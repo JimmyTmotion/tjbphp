@@ -1,6 +1,6 @@
 <?php
-$pageTitle = 'Tom J Butler | About';
-$currentPage = 'about';
+$pageTitle = 'Tom J Butler | Skills & Experience';
+$currentPage = 'skills-experience';
 include __DIR__ . '/includes/page-start.php';
 ?>
 
@@ -10,6 +10,7 @@ include __DIR__ . '/includes/page-start.php';
             <div class="col-lg-4 order-2">
                 <div class="about-image-part">
                     <img src="assets/images/tjbanddani.jpg" alt="Tom J Butler">
+                    <p class="about-image-caption">Tom &amp; Danielle, celebrating Pickleball tournament success</p>
                 </div>
             </div>
             <div class="col-lg-8 order-1">
@@ -108,6 +109,109 @@ include __DIR__ . '/includes/page-start.php';
                         <button class="testimonial-next arrow" type="button" data-testimonial-next aria-label="Next testimonial">&gt;</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="skills-categories-area">
+    <div class="container">
+        <div class="container-inner">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-title text-center">
+                        <h2>Software and Skills</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="skills-categories-grid">
+                <article class="skills-category-card">
+                    <h3>Creative Software</h3>
+                     <hr />
+                    <ul class="skills-category-list">
+                        
+                        <li>
+                            <img src="assets/images/skills/skills5.png" alt="Adobe Creative Cloud icon" width="44" height="44" loading="lazy">
+                            <span>Adobe Creative Cloud</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/skills3.png" alt="Adobe After Effects icon" width="44" height="44" loading="lazy">
+                            <span>Adobe After Effects</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/skills4.png" alt="Adobe Premiere icon" width="44" height="44" loading="lazy">
+                            <span>Adobe Premiere</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/skills7.png" alt="Adobe Character Animator icon" width="44" height="44" loading="lazy">
+                            <span>Adobe Character Animator</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/skills1.png" alt="Adobe Photoshop icon" width="44" height="44" loading="lazy">
+                            <span>Adobe Photoshop</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/skills2.png" alt="Adobe Illustrator icon" width="44" height="44" loading="lazy">
+                            <span>Adobe Illustrator</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/skills8.png" alt="Adobe Media Encoder icon" width="44" height="44" loading="lazy">
+                            <span>Adobe Media Encoder</span>
+                        </li>
+                        
+                        <li>
+                            <img src="assets/images/skills/skills9.png" alt="Blender icon" width="44" height="44" loading="lazy">
+                            <span>Blender</span>
+                        </li>
+                    </ul>
+                </article>
+                <article class="skills-category-card">
+                    <h3>AI Skills &amp; Toolkits</h3>
+                     <hr />
+                    <ul class="skills-category-list">
+                        <li>
+                            <img src="assets/images/skills/AI1.png" alt="Chat GPT and Codex icon" width="44" height="44" loading="lazy">
+                            <span>Chat GPT &amp; Codex</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/AI2.png" alt="Claude Code icon" width="44" height="44" loading="lazy">
+                            <span>Claude Code</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/AI3.png" alt="Google Gemini and Veo icon" width="44" height="44" loading="lazy">
+                            <span>Google Gemini &amp; Veo</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/AI4.png" alt="Lovable icon" width="44" height="44" loading="lazy">
+                            <span>Lovable</span>
+                        </li>
+                    </ul>
+                </article>
+
+                <article class="skills-category-card">
+                    <h3>Coding Languages &amp; Frameworks</h3>
+                    <hr />
+                    <ul class="skills-category-list">
+                        <li>
+                            <img src="assets/images/skills/code1.png" alt="PHP icon" width="44" height="44" loading="lazy">
+                            <span>Php</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/code2.png" alt="CSS icon" width="44" height="44" loading="lazy">
+                            <span>CSS</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/code3.png" alt="HTML5 icon" width="44" height="44" loading="lazy">
+                            <span>HTML5</span>
+                        </li>
+                        <li>
+                            <img src="assets/images/skills/code4.png" alt="JavaScript icon" width="44" height="44" loading="lazy">
+                            <span>Javascript</span>
+                        </li>
+                    </ul>
+                </article>
+
+                
             </div>
         </div>
     </div>

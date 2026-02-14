@@ -4,7 +4,7 @@ $siteDescription = 'Portfolio, CV and showreel for Tom J Butler, a motion design
 
 $skillsLogos = [
     'skills1.png', 'skills2.png', 'skills3.png', 'skills4.png',
-    'skills5.png', 'skills6.png', 'skills7.png', 'skills8.png',
+    'skills5.png', 'skills6.png', 'skills7.png', 'skills8.png', 'skills9.png',
     'code1.png', 'code2.png', 'code3.png', 'code4.png',
     'AI1.png', 'AI2.png', 'AI3.png', 'AI4.png'
 ];
