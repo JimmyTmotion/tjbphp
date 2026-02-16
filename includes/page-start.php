@@ -21,6 +21,15 @@ if (!isset($currentPage)) {
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/global.css">
 </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-49D5HP8XZK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-49D5HP8XZK');
+</script>
 <body class="page-is-loading">
     <div class="background-decor" aria-hidden="true">
         <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
