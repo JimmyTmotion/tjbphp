@@ -57,7 +57,7 @@ include __DIR__ . '/includes/page-start.php';
             <div class="row">
                 <div class="col-12">
                     <video controls preload="metadata" playsinline style="width: 100%; height: auto; border-radius: 12px;">
-                        <source src="https://customer-pygzbcjeg22z5vm2.cloudflarestream.com/35c53d85e95184f6d44e4a5fe4428d35/manifest/video.m3u8?clientBandwidthHint=8" type="application/x-mpegURL">
+                        <source src="https://pub-f56582404f814e389416da6105f21ddb.r2.dev/TJB%20Showreel%202026%20v10_1.mp4" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
