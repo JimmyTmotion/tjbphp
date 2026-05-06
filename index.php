@@ -30,7 +30,7 @@ include __DIR__ . '/includes/page-start.php';
                         </ul>
                     </div>
                     <div class="hero-btns">
-                        <a href="assets/cv/CV%20-%20Tom%20Butler%20-%20Feb%202026.pdf" class="about-contact-link" target="_blank" rel="noopener noreferrer" aria-label="Download CV">
+                        <a href="assets/cv/CV%20-%20Tom%20Butler%20-%20May%202026.pdf" class="about-contact-link" target="_blank" rel="noopener noreferrer" aria-label="Download CV">
                             <svg class="about-contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                 <path d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42l2.3 2.3V4a1 1 0 0 1 1-1Zm-7 14a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z" fill="currentColor"/>
                             </svg>
@@ -57,7 +57,7 @@ include __DIR__ . '/includes/page-start.php';
             <div class="row">
                 <div class="col-12">
                     <video controls preload="metadata" style="width: 100%; height: auto; border-radius: 12px;">
-                        <source src="https://pub-f56582404f814e389416da6105f21ddb.r2.dev/tjb-showreel-04.mp4" type="video/mp4">
+                        <source src="https://customer-pygzbcjeg22z5vm2.cloudflarestream.com/11e9f32ac57aed3572b2eefb9a6e1341/manifest/video.m3u8" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                 </div>
