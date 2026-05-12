@@ -1,5 +1,6 @@
 .bbapp-dashboard {
     color: #243242;
+    overflow-x: clip;
 }
 
 .bbapp-dashboard code {
@@ -164,6 +165,7 @@
 .bbapp-grid {
     display: grid;
     gap: 22px;
+    min-width: 0;
 }
 
 .bbapp-grid-two {
@@ -178,6 +180,7 @@
 .bbapp-setup-card {
     background: rgba(255, 255, 255, 0.94);
     border-radius: 26px;
+    min-width: 0;
     padding: 26px;
 }
 
@@ -185,16 +188,37 @@
     min-height: auto;
 }
 
+.bbapp-chart-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.bbapp-chart-frame {
+    height: 260px;
+    min-width: 560px;
+    position: relative;
+}
+
+.bbapp-chart-frame-fit {
+    min-width: 0;
+    width: 100%;
+}
+
 .bbapp-chart-panel canvas {
     display: block;
-    height: 260px !important;
-    max-height: 260px;
+    height: 100% !important;
+    max-height: 100%;
     width: 100% !important;
 }
 
 .bbapp-table-wrap {
     max-height: 420px;
+    max-width: 100%;
+    min-width: 0;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .bbapp-table {
@@ -349,7 +373,11 @@
     }
 
     .bbapp-chart-panel canvas {
-        height: 220px !important;
-        max-height: 220px;
+        height: 100% !important;
+        max-height: 100%;
+    }
+
+    .bbapp-chart-frame {
+        height: 220px;
     }
 }

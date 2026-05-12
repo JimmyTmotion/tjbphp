@@ -56,6 +56,18 @@ function bbapp_table_empty(array $rows, int $columns): void
     <?php
 }
 
+function bbapp_chart_canvas(string $name, bool $fitWidth = false): void
+{
+    $frameClass = 'bbapp-chart-frame' . ($fitWidth ? ' bbapp-chart-frame-fit' : '');
+    ?>
+    <div class="bbapp-chart-scroll">
+        <div class="<?php echo bbapp_e($frameClass); ?>">
+            <canvas data-bbapp-chart="<?php echo bbapp_e($name); ?>"></canvas>
+        </div>
+    </div>
+    <?php
+}
+
 include __DIR__ . '/includes/page-start.php';
 ?>
 
@@ -142,28 +154,28 @@ include __DIR__ . '/includes/page-start.php';
                             <h3>Profiles over time</h3>
                             <p>New profiles and cumulative profile count.</p>
                         </div>
-                        <canvas data-bbapp-chart="profiles"></canvas>
+                        <?php bbapp_chart_canvas('profiles'); ?>
                     </article>
                     <article class="bbapp-panel bbapp-chart-panel">
                         <div class="bbapp-panel-heading">
                             <h3>Daily active users</h3>
                             <p>Distinct users with playback events per day.</p>
                         </div>
-                        <canvas data-bbapp-chart="dailyActiveUsers"></canvas>
+                        <?php bbapp_chart_canvas('dailyActiveUsers'); ?>
                     </article>
                     <article class="bbapp-panel bbapp-chart-panel">
                         <div class="bbapp-panel-heading">
                             <h3>Theme preference</h3>
                             <p>Dark mode vs light mode from user settings.</p>
                         </div>
-                        <canvas data-bbapp-chart="themeMode"></canvas>
+                        <?php bbapp_chart_canvas('themeMode', true); ?>
                     </article>
                     <article class="bbapp-panel bbapp-chart-panel">
                         <div class="bbapp-panel-heading">
                             <h3>Access status</h3>
                             <p>Free, premium, tester override, and combined users.</p>
                         </div>
-                        <canvas data-bbapp-chart="premiumStatus"></canvas>
+                        <?php bbapp_chart_canvas('premiumStatus', true); ?>
                     </article>
                 </div>
             </div>
@@ -183,7 +195,7 @@ include __DIR__ . '/includes/page-start.php';
                             <h3>Playback by feature</h3>
                             <p>Daily play events split by content type.</p>
                         </div>
-                        <canvas data-bbapp-chart="playbackByType"></canvas>
+                        <?php bbapp_chart_canvas('playbackByType'); ?>
                     </article>
                     <article class="bbapp-panel">
                         <div class="bbapp-panel-heading">
@@ -494,14 +506,14 @@ include __DIR__ . '/includes/page-start.php';
                                     <h3>Selected profile plays over time</h3>
                                     <p>Daily play events for this profile.</p>
                                 </div>
-                                <canvas data-bbapp-chart="selectedProfilePlays"></canvas>
+                                <?php bbapp_chart_canvas('selectedProfilePlays'); ?>
                             </article>
                             <article class="bbapp-panel bbapp-chart-panel">
                                 <div class="bbapp-panel-heading">
                                     <h3>Selected profile usage mix</h3>
                                     <p>Playback events by content type.</p>
                                 </div>
-                                <canvas data-bbapp-chart="selectedProfileTypes"></canvas>
+                                <?php bbapp_chart_canvas('selectedProfileTypes', true); ?>
                             </article>
 
                             <article class="bbapp-panel">
