@@ -1,0 +1,355 @@
+.bbapp-dashboard {
+    color: #243242;
+}
+
+.bbapp-dashboard code {
+    color: #1e6fff;
+}
+
+.bbapp-hero {
+    padding: 150px 0 28px;
+}
+
+.bbapp-hero-panel,
+.bbapp-panel,
+.bbapp-setup-card,
+.bbapp-warning,
+.bbapp-kpi-card {
+    border: 1px solid rgba(36, 50, 66, 0.1);
+    box-shadow: 0 18px 50px rgba(19, 29, 41, 0.08);
+}
+
+.bbapp-hero-panel {
+    align-items: flex-end;
+    background:
+        radial-gradient(circle at 12% 15%, rgba(19, 168, 158, 0.2), transparent 28%),
+        radial-gradient(circle at 88% 10%, rgba(240, 167, 47, 0.2), transparent 24%),
+        linear-gradient(135deg, #ffffff 0%, #f6fbfb 100%);
+    border-radius: 30px;
+    display: flex;
+    gap: 32px;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 42px;
+    position: relative;
+}
+
+.bbapp-hero-panel h1 {
+    -webkit-text-fill-color: #172535;
+    background: none;
+    color: #172535;
+    font-size: clamp(36px, 6vw, 72px);
+    letter-spacing: -0.06em;
+    line-height: 0.92;
+    margin-bottom: 18px;
+    max-width: 780px;
+}
+
+.bbapp-hero-panel p {
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 720px;
+}
+
+.bbapp-eyebrow {
+    color: #13a89e;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.bbapp-range {
+    background: rgba(255, 255, 255, 0.76);
+    border: 1px solid rgba(36, 50, 66, 0.08);
+    border-radius: 999px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px;
+}
+
+.bbapp-range button {
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    color: #526173;
+    cursor: pointer;
+    font-weight: 800;
+    min-width: 48px;
+    padding: 9px 12px;
+}
+
+.bbapp-range button.is-active,
+.bbapp-range button:hover {
+    background: #172535;
+    color: #ffffff;
+}
+
+.bbapp-section {
+    padding: 34px 0;
+}
+
+.bbapp-tight-section {
+    padding-bottom: 0;
+}
+
+.bbapp-section-heading,
+.bbapp-panel-heading {
+    align-items: flex-end;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.bbapp-section-heading h2,
+.bbapp-panel-heading h3,
+.bbapp-setup-card h2 {
+    -webkit-text-fill-color: #172535;
+    background: none;
+    color: #172535;
+    letter-spacing: -0.04em;
+    margin: 0;
+}
+
+.bbapp-section-heading h2 {
+    -webkit-text-fill-color: #ffffff;
+    color: #ffffff;
+}
+
+.bbapp-section-heading span,
+.bbapp-panel-heading p {
+    -webkit-text-fill-color: #637083;
+    color: #637083;
+    margin: 0;
+}
+
+.bbapp-kpi-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.bbapp-kpi-card {
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 22px;
+}
+
+.bbapp-kpi-card span,
+.bbapp-kpi-card small {
+    color: #637083;
+    display: block;
+}
+
+.bbapp-kpi-card span {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.bbapp-kpi-card strong {
+    color: #172535;
+    display: block;
+    font-size: clamp(28px, 4vw, 44px);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.bbapp-grid {
+    display: grid;
+    gap: 22px;
+}
+
+.bbapp-grid-two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bbapp-wide-panel {
+    grid-column: 1 / -1;
+}
+
+.bbapp-panel,
+.bbapp-setup-card {
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 26px;
+    padding: 26px;
+}
+
+.bbapp-chart-panel {
+    min-height: auto;
+}
+
+.bbapp-chart-panel canvas {
+    display: block;
+    height: 260px !important;
+    max-height: 260px;
+    width: 100% !important;
+}
+
+.bbapp-table-wrap {
+    max-height: 420px;
+    overflow: auto;
+}
+
+.bbapp-table {
+    border-collapse: collapse;
+    color: #243242;
+    font-size: 14px;
+    min-width: 620px;
+    width: 100%;
+}
+
+.bbapp-table th,
+.bbapp-table td {
+    border-bottom: 1px solid rgba(36, 50, 66, 0.09);
+    padding: 13px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.bbapp-table th {
+    background: #f6f8fa;
+    color: #526173;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    position: sticky;
+    text-transform: uppercase;
+    top: 0;
+    z-index: 1;
+}
+
+.bbapp-table th.is-sortable {
+    cursor: pointer;
+    padding-right: 28px;
+    position: sticky;
+    user-select: none;
+}
+
+.bbapp-table th.is-sortable::after {
+    color: #8a96a6;
+    content: "↕";
+    font-size: 12px;
+    position: absolute;
+    right: 10px;
+}
+
+.bbapp-table th.is-sorted-asc::after {
+    content: "↑";
+}
+
+.bbapp-table th.is-sorted-desc::after {
+    content: "↓";
+}
+
+.bbapp-table tbody tr:hover {
+    background: rgba(19, 168, 158, 0.07);
+}
+
+.bbapp-table tbody tr.is-selected {
+    background: rgba(30, 111, 255, 0.1);
+}
+
+.bbapp-table a {
+    color: #1e6fff;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.bbapp-table a:hover {
+    text-decoration: underline;
+}
+
+.bbapp-table-search {
+    background: #ffffff;
+    border: 1px solid rgba(36, 50, 66, 0.14);
+    border-radius: 999px;
+    color: #243242;
+    max-width: 260px;
+    padding: 12px 18px;
+    width: 100%;
+}
+
+.bbapp-warning {
+    align-items: center;
+    background: #fff7e7;
+    border-color: rgba(240, 167, 47, 0.4);
+    border-radius: 18px;
+    color: #6f4b05;
+    display: flex;
+    gap: 10px;
+    padding: 16px 18px;
+}
+
+.bbapp-setup-card {
+    max-width: 860px;
+}
+
+.bbapp-setup-card p {
+    color: #526173;
+    line-height: 1.75;
+}
+
+.bbapp-profile-detail {
+    margin-top: 28px;
+}
+
+.bbapp-profile-heading {
+    margin-top: 34px;
+}
+
+.bbapp-profile-kpis {
+    margin-bottom: 22px;
+}
+
+@media (max-width: 1199px) {
+    .bbapp-kpi-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 991px) {
+    .bbapp-hero {
+        padding-top: 120px;
+    }
+
+    .bbapp-hero-panel,
+    .bbapp-section-heading,
+    .bbapp-panel-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .bbapp-grid-two,
+    .bbapp-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575px) {
+    .bbapp-hero-panel,
+    .bbapp-panel,
+    .bbapp-setup-card {
+        border-radius: 20px;
+        padding: 22px;
+    }
+
+    .bbapp-range {
+        border-radius: 18px;
+        width: 100%;
+    }
+
+    .bbapp-range button {
+        flex: 1 1 28%;
+    }
+
+    .bbapp-chart-panel canvas {
+        height: 220px !important;
+        max-height: 220px;
+    }
+}

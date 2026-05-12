@@ -1,0 +1,4 @@
+reference/
+.env
+.env.*
+!.env.example

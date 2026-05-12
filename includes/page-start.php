@@ -20,6 +20,11 @@ if (!isset($currentPage)) {
     <link rel="icon" type="image/png" href="/assets/images/favicon.png">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/global.css">
+    <?php if (!empty($extraStyles) && is_array($extraStyles)): ?>
+        <?php foreach ($extraStyles as $stylesheet): ?>
+            <link rel="stylesheet" href="<?php echo htmlspecialchars($stylesheet, ENT_QUOTES, 'UTF-8'); ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-49D5HP8XZK"></script>
