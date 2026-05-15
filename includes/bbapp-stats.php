@@ -204,11 +204,24 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
     $params = bbapp_date_params($range);
     $dateFilter = bbapp_date_filter('pe.created_at', $range, 'AND');
     $andDateFilter = bbapp_date_filter('created_at', $range, 'AND');
+    $joinedEventDateFilter = bbapp_date_filter('pe.created_at', $range, 'AND');
+    $nonAdminProfileFilter = 'COALESCE(is_admin, FALSE) IS NOT TRUE AND COALESCE(is_tester, FALSE) IS NOT TRUE';
+    $nonAdminProfileAliasFilter = 'COALESCE(p.is_admin, FALSE) IS NOT TRUE AND COALESCE(p.is_tester, FALSE) IS NOT TRUE';
+    $playbackProfileJoin = "
+        INNER JOIN profiles p
+            ON p.id = pe.user_id
+           AND COALESCE(p.is_admin, FALSE) IS NOT TRUE
+           AND COALESCE(p.is_tester, FALSE) IS NOT TRUE
+    ";
 
     $minDate = bbapp_query_rows($pdo, "
         SELECT LEAST(
-            COALESCE((SELECT MIN(created_at)::date FROM profiles), CURRENT_DATE),
-            COALESCE((SELECT MIN(created_at)::date FROM playback_events), CURRENT_DATE)
+            COALESCE((SELECT MIN(created_at)::date FROM profiles WHERE " . $nonAdminProfileFilter . "), CURRENT_DATE),
+            COALESCE((
+                SELECT MIN(pe.created_at)::date
+                FROM playback_events pe
+                " . $playbackProfileJoin . "
+            ), CURRENT_DATE)
         )::text AS min_date
     ")[0]['min_date'] ?? date('Y-m-d');
 
@@ -219,7 +232,8 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
     $profileRows = bbapp_query_rows($pdo, "
         SELECT created_at::date::text AS day, COUNT(*) AS value
         FROM profiles
-        WHERE created_at::date BETWEEN :start_day AND :end_day
+        WHERE " . $nonAdminProfileFilter . "
+          AND created_at::date BETWEEN :start_day AND :end_day
         GROUP BY 1
         ORDER BY 1
     ", [
@@ -231,7 +245,8 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
     $usersBeforeStart = bbapp_query_value($pdo, "
         SELECT COUNT(*)
         FROM profiles
-        WHERE created_at::date < :start_day
+        WHERE " . $nonAdminProfileFilter . "
+          AND created_at::date < :start_day
     ", [':start_day' => $start->format('Y-m-d')]);
     $runningTotal = $usersBeforeStart;
     $profileCumulative = [];
@@ -242,9 +257,10 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
     }
 
     $dauRows = bbapp_query_rows($pdo, "
-        SELECT created_at::date::text AS day, COUNT(DISTINCT user_id) AS value
-        FROM playback_events
-        WHERE created_at::date BETWEEN :start_day AND :end_day
+        SELECT pe.created_at::date::text AS day, COUNT(DISTINCT pe.user_id) AS value
+        FROM playback_events pe
+        " . $playbackProfileJoin . "
+        WHERE pe.created_at::date BETWEEN :start_day AND :end_day
         GROUP BY 1
         ORDER BY 1
     ", [
@@ -257,11 +273,12 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
 
     foreach ($contentTypes as $type) {
         $rows = bbapp_query_rows($pdo, "
-            SELECT created_at::date::text AS day, COUNT(*) AS value
-            FROM playback_events
+            SELECT pe.created_at::date::text AS day, COUNT(*) AS value
+            FROM playback_events pe
+            " . $playbackProfileJoin . "
             WHERE event_type = 'play'
               AND content_type = :content_type
-              AND created_at::date BETWEEN :start_day AND :end_day
+              AND pe.created_at::date BETWEEN :start_day AND :end_day
             GROUP BY 1
             ORDER BY 1
         ", [
@@ -275,27 +292,45 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
 
     $activeUsersInRange = bbapp_query_value($pdo, "
         SELECT COUNT(DISTINCT user_id)
-        FROM playback_events
-        WHERE 1 = 1" . $andDateFilter . "
+        FROM playback_events pe
+        " . $playbackProfileJoin . "
+        WHERE 1 = 1" . $joinedEventDateFilter . "
     ", $params);
     $playEventsInRange = bbapp_query_value($pdo, "
         SELECT COUNT(*)
-        FROM playback_events
-        WHERE event_type = 'play'" . $andDateFilter . "
+        FROM playback_events pe
+        " . $playbackProfileJoin . "
+        WHERE event_type = 'play'" . $joinedEventDateFilter . "
     ", $params);
-    $totalUsers = bbapp_query_value($pdo, 'SELECT COUNT(*) FROM profiles');
+    $totalUsers = bbapp_query_value($pdo, "
+        SELECT COUNT(*)
+        FROM profiles
+        WHERE " . $nonAdminProfileFilter . "
+    ");
     $effectivePremiumUsers = bbapp_query_value($pdo, "
         SELECT COUNT(*)
         FROM profiles
-        WHERE is_premium IS TRUE OR has_premium_override IS TRUE
+        WHERE " . $nonAdminProfileFilter . "
+          AND (is_premium IS TRUE OR has_premium_override IS TRUE)
     ");
     $paidPremiumUsers = bbapp_query_value($pdo, "
         SELECT COUNT(*)
         FROM profiles
-        WHERE is_premium IS TRUE
+        WHERE " . $nonAdminProfileFilter . "
+          AND is_premium IS TRUE
     ");
-    $active24h = bbapp_query_value($pdo, "SELECT COUNT(DISTINCT user_id) FROM playback_events WHERE created_at >= NOW() - INTERVAL '24 hours'");
-    $active30Days = bbapp_query_value($pdo, "SELECT COUNT(DISTINCT user_id) FROM playback_events WHERE created_at >= CURRENT_DATE - INTERVAL '29 days'");
+    $active24h = bbapp_query_value($pdo, "
+        SELECT COUNT(DISTINCT pe.user_id)
+        FROM playback_events pe
+        " . $playbackProfileJoin . "
+        WHERE pe.created_at >= NOW() - INTERVAL '24 hours'
+    ");
+    $active30Days = bbapp_query_value($pdo, "
+        SELECT COUNT(DISTINCT pe.user_id)
+        FROM playback_events pe
+        " . $playbackProfileJoin . "
+        WHERE pe.created_at >= CURRENT_DATE - INTERVAL '29 days'
+    ");
     $profileUsageRows = bbapp_query_rows($pdo, "
         SELECT
             p.id::text AS profile_id,
@@ -311,6 +346,7 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
             MAX(pe.created_at) AS last_event
         FROM profiles p
         LEFT JOIN playback_events pe ON pe.user_id = p.id
+        WHERE " . $nonAdminProfileAliasFilter . "
         GROUP BY p.id, p.created_at, p.is_premium, p.has_premium_override
         ORDER BY total_events DESC, last_event DESC NULLS LAST, p.created_at DESC
         LIMIT 100
@@ -353,6 +389,7 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
             LEFT JOIN user_settings us ON us.user_id = p.id
             LEFT JOIN playback_events pe ON pe.user_id = p.id
             WHERE p.id = :profile_id
+              AND " . $nonAdminProfileAliasFilter . "
             GROUP BY p.id, p.created_at, p.is_premium, p.has_premium_override, us.nightmode
         ", [':profile_id' => $selectedProfileId]);
 
@@ -426,15 +463,16 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
             ", array_merge([':profile_id' => $selectedProfileId], $params));
 
             $selectedProfileTables['quickCalm'] = bbapp_query_rows($pdo, "
-                SELECT COALESCE(quick_calm_mode, 'Unknown mode') AS title,
+                SELECT COALESCE(qc.title, pe.quick_calm_mode, 'Unknown mode') AS title,
                        COUNT(*) AS plays,
-                       MIN(created_at) AS first_played,
-                       MAX(created_at) AS last_played
-                FROM playback_events
-                WHERE user_id = :profile_id
-                  AND content_type = 'quick_calm'
-                  AND event_type = 'play'" . $andDateFilter . "
-                GROUP BY quick_calm_mode
+                       MIN(pe.created_at) AS first_played,
+                       MAX(pe.created_at) AS last_played
+                FROM playback_events pe
+                LEFT JOIN quick_calm qc ON qc.id = pe.quick_calm_id
+                WHERE pe.user_id = :profile_id
+                  AND pe.content_type = 'quick_calm'
+                  AND pe.event_type = 'play'" . $dateFilter . "
+                GROUP BY 1
                 ORDER BY plays DESC, last_played DESC
             ", array_merge([':profile_id' => $selectedProfileId], $params));
 
@@ -448,7 +486,7 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                         fp.title,
                         CASE
                             WHEN pe.content_type = 'flashcards' AND pe.flashcard_mode = 'all-available' THEN 'All available cards'
-                            WHEN pe.content_type = 'quick_calm' THEN pe.quick_calm_mode
+                            WHEN pe.content_type = 'quick_calm' THEN COALESCE(qc.title, pe.quick_calm_mode, 'Unknown mode')
                             ELSE 'Unknown content'
                         END
                     ) AS title,
@@ -457,6 +495,7 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                 LEFT JOIN videos v ON v.id = pe.video_id
                 LEFT JOIN sound_tracks st ON st.id = pe.sound_track_id
                 LEFT JOIN flashcard_packs fp ON fp.id = pe.flashcard_pack_id
+                LEFT JOIN quick_calm qc ON qc.id = pe.quick_calm_id
                 WHERE pe.user_id = :profile_id" . $dateFilter . "
                 ORDER BY pe.created_at DESC
                 LIMIT 50
@@ -469,11 +508,31 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
         'generatedAt' => (new DateTimeImmutable())->format('d M Y, H:i'),
         'kpis' => [
             'totalUsers' => $totalUsers,
-            'newToday' => bbapp_query_value($pdo, "SELECT COUNT(*) FROM profiles WHERE created_at >= CURRENT_DATE"),
-            'new7Days' => bbapp_query_value($pdo, "SELECT COUNT(*) FROM profiles WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'"),
-            'new30Days' => bbapp_query_value($pdo, "SELECT COUNT(*) FROM profiles WHERE created_at >= CURRENT_DATE - INTERVAL '29 days'"),
+            'newToday' => bbapp_query_value($pdo, "
+                SELECT COUNT(*)
+                FROM profiles
+                WHERE " . $nonAdminProfileFilter . "
+                  AND created_at >= CURRENT_DATE
+            "),
+            'new7Days' => bbapp_query_value($pdo, "
+                SELECT COUNT(*)
+                FROM profiles
+                WHERE " . $nonAdminProfileFilter . "
+                  AND created_at >= CURRENT_DATE - INTERVAL '6 days'
+            "),
+            'new30Days' => bbapp_query_value($pdo, "
+                SELECT COUNT(*)
+                FROM profiles
+                WHERE " . $nonAdminProfileFilter . "
+                  AND created_at >= CURRENT_DATE - INTERVAL '29 days'
+            "),
             'active24h' => $active24h,
-            'active7Days' => bbapp_query_value($pdo, "SELECT COUNT(DISTINCT user_id) FROM playback_events WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'"),
+            'active7Days' => bbapp_query_value($pdo, "
+                SELECT COUNT(DISTINCT pe.user_id)
+                FROM playback_events pe
+                " . $playbackProfileJoin . "
+                WHERE pe.created_at >= CURRENT_DATE - INTERVAL '6 days'
+            "),
             'active30Days' => $active30Days,
             'effectivePremiumUsers' => $effectivePremiumUsers,
             'paidPremiumUsers' => $paidPremiumUsers,
@@ -485,16 +544,18 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
             'returningUsers' => bbapp_query_value($pdo, "
                 SELECT COUNT(*)
                 FROM (
-                    SELECT user_id
-                    FROM playback_events
+                    SELECT pe.user_id
+                    FROM playback_events pe
+                    " . $playbackProfileJoin . "
                     GROUP BY user_id
-                    HAVING COUNT(DISTINCT created_at::date) > 1
+                    HAVING COUNT(DISTINCT pe.created_at::date) > 1
                 ) returning_users
             "),
             'usersNeverPlayed' => bbapp_query_value($pdo, "
                 SELECT COUNT(*)
                 FROM profiles p
-                WHERE NOT EXISTS (
+                WHERE " . $nonAdminProfileAliasFilter . "
+                  AND NOT EXISTS (
                     SELECT 1 FROM playback_events pe WHERE pe.user_id = p.id
                 )
             "),
@@ -515,7 +576,9 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                         ELSE 'Unknown'
                     END AS label,
                     COUNT(*) AS value
-                FROM user_settings
+                FROM user_settings us
+                INNER JOIN profiles p ON p.id = us.user_id
+                WHERE " . $nonAdminProfileAliasFilter . "
                 GROUP BY 1
                 ORDER BY 1
             "),
@@ -529,6 +592,7 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                     END AS label,
                     COUNT(*) AS value
                 FROM profiles
+                WHERE " . $nonAdminProfileFilter . "
                 GROUP BY 1
                 ORDER BY 1
             "),
@@ -536,16 +600,18 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
         ],
         'tables' => [
             'playbackTypes' => bbapp_query_rows($pdo, "
-                SELECT content_type, COUNT(*) AS plays, COUNT(DISTINCT user_id) AS unique_users, MAX(created_at) AS last_played
-                FROM playback_events
-                WHERE event_type = 'play'" . $andDateFilter . "
-                GROUP BY content_type
+                SELECT pe.content_type, COUNT(*) AS plays, COUNT(DISTINCT pe.user_id) AS unique_users, MAX(pe.created_at) AS last_played
+                FROM playback_events pe
+                " . $playbackProfileJoin . "
+                WHERE event_type = 'play'" . $joinedEventDateFilter . "
+                GROUP BY pe.content_type
                 ORDER BY plays DESC
             ", $params),
             'videos' => bbapp_query_rows($pdo, "
                 SELECT COALESCE(v.title, 'Unknown video') AS title, COALESCE(v.is_premium, false) AS is_premium,
                        COUNT(pe.id) AS plays, COUNT(DISTINCT pe.user_id) AS unique_users, MAX(pe.created_at) AS last_played
                 FROM playback_events pe
+                " . $playbackProfileJoin . "
                 LEFT JOIN videos v ON v.id = pe.video_id
                 WHERE pe.content_type = 'video'
                   AND pe.event_type = 'play'" . $dateFilter . "
@@ -556,6 +622,7 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                 SELECT COALESCE(st.title, 'Unknown sound') AS title, COALESCE(st.is_premium, false) AS is_premium,
                        COUNT(pe.id) AS plays, COUNT(DISTINCT pe.user_id) AS unique_users, MAX(pe.created_at) AS last_played
                 FROM playback_events pe
+                " . $playbackProfileJoin . "
                 LEFT JOIN sound_tracks st ON st.id = pe.sound_track_id
                 WHERE pe.content_type = 'sound'
                   AND pe.event_type = 'play'" . $dateFilter . "
@@ -571,6 +638,7 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                     COUNT(DISTINCT pe.user_id) AS unique_users,
                     MAX(pe.created_at) AS last_played
                 FROM playback_events pe
+                " . $playbackProfileJoin . "
                 LEFT JOIN flashcard_packs fp ON fp.id = pe.flashcard_pack_id
                 WHERE pe.content_type = 'flashcards'
                   AND pe.event_type = 'play'" . $dateFilter . "
@@ -578,14 +646,16 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                 ORDER BY plays DESC, title ASC
             ", $params),
             'quickCalm' => bbapp_query_rows($pdo, "
-                SELECT COALESCE(quick_calm_mode, 'Unknown mode') AS title,
+                SELECT COALESCE(qc.title, pe.quick_calm_mode, 'Unknown mode') AS title,
                        COUNT(*) AS plays,
-                       COUNT(DISTINCT user_id) AS unique_users,
-                       MAX(created_at) AS last_played
-                FROM playback_events
-                WHERE content_type = 'quick_calm'
-                  AND event_type = 'play'" . $andDateFilter . "
-                GROUP BY quick_calm_mode
+                       COUNT(DISTINCT pe.user_id) AS unique_users,
+                       MAX(pe.created_at) AS last_played
+                FROM playback_events pe
+                " . $playbackProfileJoin . "
+                LEFT JOIN quick_calm qc ON qc.id = pe.quick_calm_id
+                WHERE pe.content_type = 'quick_calm'
+                  AND event_type = 'play'" . $joinedEventDateFilter . "
+                GROUP BY 1
                 ORDER BY plays DESC, title ASC
             ", $params),
             'contentHealth' => bbapp_query_rows($pdo, "
@@ -619,21 +689,33 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                 FROM videos v
                 WHERE NOT EXISTS (
                     SELECT 1 FROM playback_events pe
-                    WHERE pe.video_id = v.id AND pe.content_type = 'video' AND pe.event_type = 'play'
+                    INNER JOIN profiles p ON p.id = pe.user_id
+                    WHERE pe.video_id = v.id
+                      AND pe.content_type = 'video'
+                      AND pe.event_type = 'play'
+                      AND " . $nonAdminProfileAliasFilter . "
                 )
                 UNION ALL
                 SELECT 'Sound' AS type, st.title, st.is_premium, st.is_published
                 FROM sound_tracks st
                 WHERE NOT EXISTS (
                     SELECT 1 FROM playback_events pe
-                    WHERE pe.sound_track_id = st.id AND pe.content_type = 'sound' AND pe.event_type = 'play'
+                    INNER JOIN profiles p ON p.id = pe.user_id
+                    WHERE pe.sound_track_id = st.id
+                      AND pe.content_type = 'sound'
+                      AND pe.event_type = 'play'
+                      AND " . $nonAdminProfileAliasFilter . "
                 )
                 UNION ALL
                 SELECT 'Flashcard pack' AS type, fp.title, fp.is_premium, fp.is_published
                 FROM flashcard_packs fp
                 WHERE NOT EXISTS (
                     SELECT 1 FROM playback_events pe
-                    WHERE pe.flashcard_pack_id = fp.id AND pe.content_type = 'flashcards' AND pe.event_type = 'play'
+                    INNER JOIN profiles p ON p.id = pe.user_id
+                    WHERE pe.flashcard_pack_id = fp.id
+                      AND pe.content_type = 'flashcards'
+                      AND pe.event_type = 'play'
+                      AND " . $nonAdminProfileAliasFilter . "
                 )
                 ORDER BY type, title
             "),
@@ -648,15 +730,17 @@ function bbapp_build_dashboard(PDO $pdo, array $range, ?string $selectedProfileI
                         fp.title,
                         CASE
                             WHEN pe.content_type = 'flashcards' AND pe.flashcard_mode = 'all-available' THEN 'All available cards'
-                            WHEN pe.content_type = 'quick_calm' THEN pe.quick_calm_mode
+                            WHEN pe.content_type = 'quick_calm' THEN COALESCE(qc.title, pe.quick_calm_mode, 'Unknown mode')
                             ELSE 'Unknown content'
                         END
                     ) AS title,
                     pe.created_at
                 FROM playback_events pe
+                " . $playbackProfileJoin . "
                 LEFT JOIN videos v ON v.id = pe.video_id
                 LEFT JOIN sound_tracks st ON st.id = pe.sound_track_id
                 LEFT JOIN flashcard_packs fp ON fp.id = pe.flashcard_pack_id
+                LEFT JOIN quick_calm qc ON qc.id = pe.quick_calm_id
                 WHERE 1 = 1" . $dateFilter . "
                 ORDER BY pe.created_at DESC
                 LIMIT 30
